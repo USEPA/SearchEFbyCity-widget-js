@@ -17,8 +17,15 @@ function(declare, BaseWidget,EFdownload,_config) {
 //methods to communication with app container:
 
     postCreate: function() {
-      this.inherited(arguments);
-      console.log('postCreate');
+           this.inherited(arguments);
+      
+      var searchtext = ""
+      //replace any plus signs with space	
+      if (this.appConfig.city) searchtext = this.appConfig.city.replace(/\+/g," ");
+      if (searchtext.length > 0) {
+        this.efsearchNode.value = searchtext;
+        this._drawEFxml();
+      }
     },
 
    startup: function() {
@@ -62,7 +69,7 @@ destroy: function () {
       var searchtext = dojo.string.trim(this.efsearchNode.value);
         var citypattern = /^[A-Za-z| ]+, {0,}[A-Za-z]{2}$/i;
         if (!(citypattern.test(searchtext))) {
-          alert("You need to input City name and State Abbreviation seperated by comma. Example: 'Chicago, VA'.");
+          alert("You need to input City name and State Abbreviation separated by comma. Example: 'Chicago, IL'.");
           return false;
         }
         this._showloading();
@@ -118,7 +125,7 @@ destroy: function () {
         });
         
         var efRequest = esri.request({
-            url: inputurl,
+            url:  inputurl,
             handleAs: "text"
         });
         efRequest.then(
